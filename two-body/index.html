@@ -52,6 +52,23 @@ window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]
   .warn .kt { font-size:12px; font-weight:900; letter-spacing:.25em; color:#a16207; margin-bottom:6px; }
   mjx-container { color:#1c1917; }
   .derive mjx-container, .key mjx-container { color:#000; }
+
+/* --- mobile --- */
+mjx-container { max-width:100%; }
+mjx-container[display="true"] { overflow-x:auto; overflow-y:hidden; }
+.tblwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+@media (max-width:640px){
+  main { padding:30px 16px 60px; }
+  .hd { padding:12px 14px; }
+  .brand { font-size:1.15rem; }
+  h2 { font-size:22px; }
+  .note { padding:22px 16px; margin-bottom:48px; }
+  .ccard .cn { font-size:1.12rem; }
+  .modal { padding:28px 18px; }
+  table { font-size:13px; }
+  th, td { padding:8px 9px; }
+  .fbox { padding:12px 14px; }
+}
 </style>
 </head>
 <body>
@@ -330,7 +347,7 @@ window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]
     <div class="fbox"><div class="fq">⑤ 最後に床の系へ戻したか？</div><div class="fa">答えが重心系の量のままになっていないか確認する。\(v_1 = V + \frac{m_2}{M} v_{\text{相対}}\) の戻しが最後の一手。</div></div>
   </div>
   <h3>頻出の型と「最初の一手」</h3>
-  <table>
+  <div class="tblwrap"><table>
     <tr><th style="width:34%">型</th><th>最初の一手</th></tr>
     <tr><td>台＋小球＋ばね（壁から離れる）</td><td>固定局面の単振動で「自然長に戻る瞬間」の速度を出し、以後は重心分離（Section 3-A2）</td></tr>
     <tr><td>動く斜面＋小物体</td><td>重心の水平位置が不変 ＋ エネルギー保存 ＋ 拘束条件（Section 7-E2）</td></tr>
@@ -338,7 +355,7 @@ window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]
     <tr><td>連星・人工衛星と母星</td><td>相対運動のケプラー問題として周期を出す。質量は合計（Section 5）</td></tr>
     <tr><td>2体が分裂・爆発する</td><td>運動量保存で重心は不変、増えたエネルギーは相対運動へ（Section 4）</td></tr>
     <tr><td>ひも・滑車でつながれた2体</td><td>拘束条件 \(a_1 = -a_2\) を先に書き、運動方程式と連立（Section 7-E1）</td></tr>
-  </table>
+  </table></div>
   <div class="warn">
     <div class="kt">総括：落とし穴チェックリスト</div>
     <ul class="pts">
@@ -354,13 +371,13 @@ window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]
 
 <section id="summary">
   <h2><span class="no">SECTION 10</span>まとめ：全ては2本の式に帰着する</h2>
-  <table>
+  <div class="tblwrap"><table>
     <tr><th style="width:26%">見るもの</th><th style="width:37%">式</th><th>担う内容</th></tr>
     <tr><td>全体（重心）</td><td>\(M \ddot{\vec R} = \vec F^{\,\text{外}}_{\text{合計}}\)</td><td>運動量保存・重心の軌道。内力は一切関与しない</td></tr>
     <tr><td>相対運動</td><td>\(\mu \, \ddot{\vec r} = \vec F^{\,\text{内}}\)</td><td>振動・軌道・衝突。外力（重力型）は消える</td></tr>
     <tr><td>エネルギー</td><td>\(E = \frac12 M V^2 + \frac12 \mu v_{\text{相対}}^2 + U\)</td><td>内力が変えられるのは相対の部分だけ</td></tr>
     <tr><td>戻し</td><td>\(\vec r_1 = \vec R + \frac{m_2}{M}\vec r\)、\(\vec r_2 = \vec R - \frac{m_1}{M}\vec r\)</td><td>重い方ほど重心の近くにいる</td></tr>
-  </table>
+  </table></div>
   <p>二体問題の「解法パターン」とは結局、この表のどの行をどの順で使うかのバリエーションにすぎない。公式を増やすのではなく、運動方程式を2本書いて足し引きする手続きを体に入れること。それが、初見の東大の問題でも崩れない解き方になる。</p>
   <p class="small" style="margin-top:26px">動画はいずれも運動方程式の数値積分ではなく、重心分離した解析解そのものを描画したもの。だから動画の中で重心は正確に等速直進し、相対運動は正確に単振動・ケプラー運動になる。</p>
 </section>

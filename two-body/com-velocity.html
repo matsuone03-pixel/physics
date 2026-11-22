@@ -53,6 +53,24 @@ window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]
   .ro .rv.red { color:#dc2626; }
   footer { border-top:1px solid #e7e5e4; margin-top:50px; padding:22px 0 0; font-size:13px; }
   footer a { color:#dc2626; text-decoration:none; font-weight:700; margin-right:18px; }
+
+/* --- mobile --- */
+mjx-container { max-width:100%; }
+mjx-container[display="true"] { overflow-x:auto; overflow-y:hidden; }
+@media (max-width:640px){
+  .wrap { padding:0 14px 60px; }
+  h1 { font-size:26px; }
+  h1 .thin { font-size:14.5px; }
+  h2 { font-size:21px; }
+  h3 { font-size:16.5px; }
+  section { padding:30px 0 4px; }
+  .sim { padding:12px; }
+  .readout { grid-template-columns:1fr 1fr; }
+  .ro .rv { font-size:18px; }
+  .ctl { grid-template-columns:1fr 1fr; gap:8px 14px; }
+  .key, .derive, .warn { padding:14px 15px; }
+  p, ul.pts li { font-size:15px; }
+}
 </style>
 </head>
 <body>
