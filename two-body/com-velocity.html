@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>重心速度と相対速度の関係 | 二体問題</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#ffffff; color:#1c1917; font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif; line-height:1.9; }
+  .wrap { max-width:860px; margin:0 auto; padding:0 20px 90px; }
+  .crumbs { padding:20px 0 0; font-size:12.5px; }
+  .crumbs a { color:#dc2626; text-decoration:none; font-weight:700; }
+  .crumbs span { color:#a8a29e; margin:0 6px; }
+  header.hero { padding:26px 0 34px; border-bottom:1px solid #e7e5e4; }
+  .kicker { font-size:12px; letter-spacing:.35em; color:#dc2626; font-weight:700; margin-bottom:12px; }
+  h1 { font-size:34px; font-weight:900; line-height:1.4; }
+  h1 .thin { display:block; font-size:16px; font-weight:400; color:#57534e; margin-top:12px; line-height:1.8; }
+  section { padding:40px 0 6px; }
+  h2 { font-size:25px; font-weight:900; margin-bottom:6px; }
+  h2 .no { color:#dc2626; font-size:14px; display:block; letter-spacing:.25em; margin-bottom:4px; }
+  h3 { font-size:18px; font-weight:900; margin:26px 0 6px; border-left:4px solid #dc2626; padding-left:12px; }
+  p { font-size:15.5px; color:#292524; margin:10px 0; }
+  .small { font-size:12.5px; color:#78716c; }
+  .key { background:#fafaf9; border:1px solid #e7e5e4; border-left:5px solid #dc2626; border-radius:6px; padding:18px 20px; margin:20px 0; }
+  .key .kt { font-size:12px; font-weight:900; letter-spacing:.25em; color:#dc2626; margin-bottom:6px; }
+  .derive { background:#f5f5f4; border:1px solid #e7e5e4; border-radius:6px; padding:16px 20px; margin:16px 0; }
+  .derive .dt { font-size:11.5px; font-weight:900; letter-spacing:.2em; color:#78716c; margin-bottom:4px; }
+  figure { margin:22px 0; text-align:center; }
+  figure svg { max-width:100%; height:auto; }
+  figcaption { font-size:12.5px; color:#78716c; margin-top:8px; }
+  b.hl { color:#000; }
+  ul.pts { margin:10px 0 10px 22px; }
+  ul.pts li { font-size:15.5px; color:#292524; margin:7px 0; }
+  .warn { background:#fef9e7; border:1px solid #f5d97a; border-left:5px solid #eab308; border-radius:6px; padding:16px 20px; margin:18px 0; }
+  .warn .kt { font-size:12px; font-weight:900; letter-spacing:.25em; color:#a16207; margin-bottom:6px; }
+  .sim { background:#fafaf9; border:1px solid #e7e5e4; border-radius:10px; padding:18px; margin:20px 0; }
+  canvas { width:100%; height:auto; display:block; background:#fff; border:1px solid #e7e5e4; border-radius:8px; }
+  .ctl { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 22px; margin-top:14px; }
+  .ctl label { font-size:13px; font-weight:700; display:flex; justify-content:space-between; }
+  .ctl label output { font-weight:900; color:#dc2626; }
+  .ctl input[type=range] { width:100%; accent-color:#dc2626; }
+  .btns { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .btns button { font-family:inherit; font-size:13px; font-weight:700; border:1px solid #d6d3d1; background:#fff; border-radius:999px; padding:7px 18px; cursor:pointer; }
+  .btns button.on { background:#1c1917; color:#fff; border-color:#1c1917; }
+  .readout { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:14px; }
+  .ro { background:#fff; border:1px solid #e7e5e4; border-radius:8px; padding:10px 14px; }
+  .ro .rk { font-size:11px; letter-spacing:.12em; color:#78716c; font-weight:700; }
+  .ro .rv { font-size:21px; font-weight:900; }
+  .ro .rv.red { color:#dc2626; }
+  footer { border-top:1px solid #e7e5e4; margin-top:50px; padding:22px 0 0; font-size:13px; }
+  footer a { color:#dc2626; text-decoration:none; font-weight:700; margin-right:18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumbs"><a href="../index.html">物理</a><span>/</span><a href="./index.html">二体問題</a><span>/</span>重心速度と相対速度</div>
+  <header class="hero">
+    <div class="kicker">CENTER OF MASS &amp; RELATIVE VELOCITY</div>
+    <h1>重心速度と相対速度の関係
+      <span class="thin">2つの速度 \(v_1, v_2\) は、「重心の速度 \(V\)」と「相対速度 \(v_{\text{相対}}\)」に組み替えられる。組み替えの係数は質量比で決まり、ここを体で理解すると衝突もばねも連星も同じ目で見える。</span>
+    </h1>
+  </header>
+
+  <section>
+    <h2><span class="no">SECTION 1</span>結論：変換式はこの3本</h2>
+    <div class="key">
+      <div class="kt">定義と変換</div>
+      \[ V = \frac{m_1 v_1 + m_2 v_2}{m_1 + m_2}, \qquad v_{\text{相対}} = v_1 - v_2 \]
+      \[ v_1 = V + \frac{m_2}{m_1+m_2}\, v_{\text{相対}}, \qquad v_2 = V - \frac{m_1}{m_1+m_2}\, v_{\text{相対}} \]
+    </div>
+    <p>読み方：<b class="hl">各体の速度 ＝ 重心と一緒に流れる分（\(V\)）＋ 相対速度を「相手の質量の割合」だけ受け取った分</b>。重い体ほど受け取る割合が小さい。だから重い体は重心の近くで少しだけ動き、軽い体は大きく動く。位置のときの配分（\(\vec r_1 = \vec R + \frac{m_2}{M}\vec r\)）とまったく同じ形で、これは偶然ではなく、位置の式を時間で微分すれば速度の式になるからである。</p>
+    <figure>
+      <svg viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="速度の配分図">
+        <rect x="0" y="0" width="680" height="250" fill="#fafaf9"/>
+        <text x="24" y="34" fill="#000" font-size="14" font-weight="700">例：m₁ = 1, m₂ = 3, v₁ = 8, v₂ = 0 のとき</text>
+        <text x="24" y="58" fill="#57534e" font-size="12.5">V = (1·8 + 3·0)/4 = 2, v相対 = 8 − 0 = 8</text>
+        <line x1="60" y1="120" x2="620" y2="120" stroke="#a8a29e" stroke-width="1.5"/>
+        <g font-size="11.5" fill="#57534e" text-anchor="middle">
+          <text x="60" y="140">0</text><text x="172" y="140">2</text><text x="284" y="140">4</text><text x="396" y="140">6</text><text x="508" y="140">8</text><text x="620" y="140">10</text>
+        </g>
+        <g stroke="#a8a29e" stroke-width="1"><line x1="60" y1="114" x2="60" y2="126"/><line x1="172" y1="114" x2="172" y2="126"/><line x1="284" y1="114" x2="284" y2="126"/><line x1="396" y1="114" x2="396" y2="126"/><line x1="508" y1="114" x2="508" y2="126"/><line x1="620" y1="114" x2="620" y2="126"/></g>
+        <line x1="172" y1="96" x2="508" y2="96" stroke="#dc2626" stroke-width="3"/>
+        <polygon points="508,96 494,90 494,102" fill="#dc2626"/>
+        <text x="508" y="82" fill="#dc2626" font-size="13.5" font-weight="700" text-anchor="end">v₁ = 8（軽い m₁）</text>
+        <line x1="60" y1="168" x2="172" y2="168" stroke="#b45309" stroke-width="3"/>
+        <polygon points="172,168 158,162 158,174" fill="#b45309"/>
+        <text x="172" y="192" fill="#b45309" font-size="13.5" font-weight="700" text-anchor="middle">V = 2（重心）</text>
+        <circle cx="60" cy="168" r="4" fill="#2563eb"/>
+        <text x="60" y="192" fill="#2563eb" font-size="13.5" font-weight="700" text-anchor="middle">v₂ = 0（重い m₂）</text>
+        <text x="340" y="228" fill="#292524" font-size="13" text-anchor="middle">v₁ = V + (3/4)·v相対 = 2 + 6 = 8 ／ v₂ = V − (1/4)·v相対 = 2 − 2 = 0</text>
+      </svg>
+      <figcaption>相対速度 8 のうち、軽い m₁ は 3/4（=6）を受け取り、重い m₂ は 1/4（=2）を逆向きに受け取る。受け取り分を引くと両方とも V = 2 に一致する。</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2><span class="no">SECTION 2</span>なぜ「相手の質量の割合」なのか（導出）</h2>
+    <p>重心系で見た速度を \(u_1 = v_1 - V\)、\(u_2 = v_2 - V\) と置く。重心系では全運動量が0だから</p>
+    \[ m_1 u_1 + m_2 u_2 = 0 \]
+    <p>が成り立つ。一方、重心系でも相対速度は変わらない（両方から同じ \(V\) を引くので差は不変）：</p>
+    \[ u_1 - u_2 = v_1 - v_2 = v_{\text{相対}} \]
+    <p>この2式は連立方程式で、解けば \(u_1 = \dfrac{m_2}{m_1+m_2} v_{\text{相対}}\)、\(u_2 = -\dfrac{m_1}{m_1+m_2} v_{\text{相対}}\) が出る。これが変換式の正体。<b class="hl">「重心系では運動量が釣り合う」という条件が、配分の係数を質量比に固定する</b>のである。</p>
+    <div class="derive">
+      <div class="dt">ついでに分かること</div>
+      <p>重心系の速度の大きさの比は \(\dfrac{|u_1|}{|u_2|} = \dfrac{m_2}{m_1}\)（質量の逆比）。そして相対速度は \(|u_1| + |u_2|\)、つまり<b class="hl">重心系で向かい合う2速度の「開き」そのもの</b>が相対速度。\(u_1\) そのものと相対速度を混同しないこと。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">SECTION 3</span>触って確かめる</h2>
+    <p>質量と速度を変えて、\(V\) と相対速度、各体の重心系速度がどう連動するかを見る。「重心系で見る」に切り替えると、重心が中央に固定され、2体が重心を挟んで逆向きに動くのが見える（端まで行った体は反対側から戻ってくる）。</p>
+    <div class="sim">
+      <canvas id="sim" width="860" height="240"></canvas>
+      <div class="readout">
+        <div class="ro"><div class="rk">重心速度 V</div><div class="rv red" id="roV">2.0</div></div>
+        <div class="ro"><div class="rk">相対速度 v₁ − v₂</div><div class="rv" id="roRel">8.0</div></div>
+        <div class="ro"><div class="rk">重心系の u₁（m₁）</div><div class="rv" id="roU1">6.0</div></div>
+        <div class="ro"><div class="rk">重心系の u₂（m₂）</div><div class="rv" id="roU2">−2.0</div></div>
+      </div>
+      <div class="ctl">
+        <div><label>質量 m₁ <output id="oM1">1</output></label><input type="range" id="sM1" min="1" max="6" step="1" value="1"></div>
+        <div><label>質量 m₂ <output id="oM2">3</output></label><input type="range" id="sM2" min="1" max="6" step="1" value="3"></div>
+        <div><label>速度 v₁ <output id="oV1">8</output></label><input type="range" id="sV1" min="-10" max="10" step="1" value="8"></div>
+        <div><label>速度 v₂ <output id="oV2">0</output></label><input type="range" id="sV2" min="-10" max="10" step="1" value="0"></div>
+      </div>
+      <div class="btns">
+        <button id="btnFrame" type="button">重心系で見る</button>
+        <button id="btnPause" type="button">止める</button>
+        <button id="btnReset" type="button">位置を戻す</button>
+      </div>
+      <p class="small" style="margin-top:10px">金の × が重心。m₁ を大きくすると u₁ が小さくなり（重心の近くで動く）、m₂ を大きくすると逆になることを、\(u_1 = \frac{m_2}{M} v_{\text{相対}}\) と見比べながら確認するといい。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">SECTION 4</span>数値例で体に入れる</h2>
+    <h3>例1：氷の上で2人が押し合う</h3>
+    <p>静止した2人（\(50\,\text{kg}\) と \(75\,\text{kg}\)）が互いを押して離れた。外力がないので重心は静止したまま（\(V = 0\)）。離れる相対速度が \(5\,\text{m/s}\) になったとすると、変換式から軽い人は \(u = \dfrac{75}{125} \times 5 = 3\,\text{m/s}\)、重い人は \(-\dfrac{50}{125} \times 5 = -2\,\text{m/s}\)。速さの比 \(3:2\) は質量の逆比 \(75:50\) そのもの。「軽い方が速く飛ぶ」は感覚ではなく、運動量の釣り合いの帰結。</p>
+    <h3>例2：弾性衝突は「重心系で反転」</h3>
+    <p>質量 \(m\) が速さ \(v_0\) で静止した質量 \(2m\) に弾性衝突する。\(V = \dfrac{v_0}{3}\)、重心系では \(u_1 = \dfrac{2v_0}{3}\)、\(u_2 = -\dfrac{v_0}{3}\)。弾性衝突では重心系の速度がそのまま反転するから、衝突後は \(u_1' = -\dfrac{2v_0}{3}\)、\(u_2' = \dfrac{v_0}{3}\)。床の系に戻す（\(V\) を足す）と</p>
+    \[ v_1' = \frac{v_0}{3} - \frac{2v_0}{3} = -\frac{v_0}{3}, \qquad v_2' = \frac{v_0}{3} + \frac{v_0}{3} = \frac{2v_0}{3} \]
+    <p>公式集の「弾性衝突の結果」は、この変換を暗算でやっているだけにすぎない。反発係数 \(e\) の衝突なら反転ではなく \(-e\) 倍になる（本編 Section 4）。</p>
+  </section>
+
+  <section>
+    <h2><span class="no">SECTION 5</span>間違いやすい点</h2>
+    <ul class="pts">
+      <li><b class="hl">\(u_1\) と相対速度は別物。</b>\(u_1\) は相対速度のうち「相手の質量の割合」だけ。相対速度は \(u_1 - u_2\)（重心系での2速度の開き）に戻して初めて一致する。</li>
+      <li><b class="hl">相対速度の引く順番。</b>\(v_{\text{相対}} = v_1 - v_2\) と定義したら、変換式の符号もそれに合わせる。順番を逆にすると \(u\) の符号が全て反転する（大きさは変わらない）。</li>
+      <li><b class="hl">\(V\) は内力で変わらない。</b>衝突しても、爆発しても、ばねが伸びても、\(V\) を変えられるのは外力だけ。だから「衝突前後で \(V\) は同じ」が常に最初の一手になる。</li>
+      <li><b class="hl">エネルギーは速度の変換とセットで。</b>全運動エネルギーは \(\frac12 M V^2 + \frac12 \mu v_{\text{相対}}^2\) と割れる。衝突で減らせるのは相対速度の分だけ、という事実はこの配分から来る。</li>
+    </ul>
+    <p>本編への接続：ばね系の振動（相対速度が \(\cos\) で振動する）、衝突（相対速度が \(-e\) 倍になる）、連星（相対速度が回転する）は、すべて「\(V\) は別に流れ、相対速度だけが内力に振り回される」という同じ構造をしている。</p>
+  </section>
+
+  <footer>
+    <a href="../index.html">物理トップへ</a>
+    <a href="./index.html">二体問題の解き方（本編）へ</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const cv = document.getElementById('sim');
+  const ctx = cv.getContext('2d');
+  const W = 44, H = 240, PX = cv.width / W, CY = 118;
+  const S = { m1:1, m2:3, v1:8, v2:0, x1:12, x2:27, com:false, run:true };
+  const $ = id => document.getElementById(id);
+  function vals(){
+    const M = S.m1 + S.m2;
+    const V = (S.m1*S.v1 + S.m2*S.v2) / M;
+    const rel = S.v1 - S.v2;
+    return { M, V, rel, u1: S.v1 - V, u2: S.v2 - V };
+  }
+  function fmt(x){ return (Math.abs(x) < 0.05 ? 0 : x).toFixed(1).replace('-', '−'); }
+  function sync(){
+    $('oM1').textContent = S.m1; $('oM2').textContent = S.m2;
+    $('oV1').textContent = S.v1; $('oV2').textContent = S.v2;
+    const { V, rel, u1, u2 } = vals();
+    $('roV').textContent = fmt(V); $('roRel').textContent = fmt(rel);
+    $('roU1').textContent = fmt(u1); $('roU2').textContent = fmt(u2);
+  }
+  function bind(id, key){
+    $(id).addEventListener('input', e => { S[key] = parseFloat(e.target.value); sync(); });
+  }
+  bind('sM1','m1'); bind('sM2','m2'); bind('sV1','v1'); bind('sV2','v2');
+  $('btnFrame').addEventListener('click', () => {
+    S.com = !S.com;
+    $('btnFrame').textContent = S.com ? '床の系で見る' : '重心系で見る';
+    $('btnFrame').classList.toggle('on', S.com);
+  });
+  $('btnPause').addEventListener('click', () => {
+    S.run = !S.run;
+    $('btnPause').textContent = S.run ? '止める' : '動かす';
+  });
+  $('btnReset').addEventListener('click', () => { S.x1 = 12; S.x2 = 27; });
+  const mod = (a, n) => ((a % n) + n) % n;
+  function arrow(x, y, v, color){
+    if (Math.abs(v) < 0.05) return;
+    const len = v * 9;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + len, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x + len, y);
+    ctx.lineTo(x + len - Math.sign(v)*8, y - 4.5); ctx.lineTo(x + len - Math.sign(v)*8, y + 4.5);
+    ctx.closePath(); ctx.fill();
+  }
+  function draw(){
+    const { V, u1, u2 } = vals();
+    const comX = mod((S.m1*S.x1 + S.m2*S.x2) / (S.m1 + S.m2), W);
+    const off = S.com ? comX - W/2 : 0;
+    const DX = x => mod(x - off, W) * PX;
+    ctx.clearRect(0, 0, cv.width, H);
+    ctx.strokeStyle = '#d6d3d1'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, CY + 44); ctx.lineTo(cv.width, CY + 44); ctx.stroke();
+    ctx.setLineDash([5, 5]); ctx.strokeStyle = '#b45309'; ctx.lineWidth = 1.5;
+    const cx = DX(comX);
+    ctx.beginPath(); ctx.moveTo(cx, 26); ctx.lineTo(cx, CY + 44); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - 7, CY - 52); ctx.lineTo(cx + 7, CY - 38);
+    ctx.moveTo(cx + 7, CY - 52); ctx.lineTo(cx - 7, CY - 38);
+    ctx.stroke();
+    ctx.fillStyle = '#b45309'; ctx.font = '700 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('重心', cx, CY - 60);
+    const balls = [
+      { x: S.x1, m: S.m1, v: S.com ? u1 : S.v1, c: '#dc2626', name: 'm₁', vn: 'v₁' },
+      { x: S.x2, m: S.m2, v: S.com ? u2 : S.v2, c: '#2563eb', name: 'm₂', vn: 'v₂' }
+    ];
+    for (const b of balls){
+      const x = DX(b.x), r = 10 + 5 * Math.cbrt(b.m);
+      arrow(x, CY - r - 16, b.v, b.c);
+      ctx.fillStyle = b.c;
+      ctx.beginPath(); ctx.arc(x, CY, r, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = '900 13px sans-serif';
+      ctx.fillText(b.name, x, CY + 4.5);
+      ctx.fillStyle = '#292524'; ctx.font = '700 12.5px sans-serif';
+      ctx.fillText(b.vn + ' = ' + fmt(b.v), x, CY + 66);
+    }
+    ctx.fillStyle = '#78716c'; ctx.font = '12px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText(S.com ? '重心系（重心は中央で静止）' : '床の系', 10, 20);
+  }
+  let last = performance.now();
+  function tick(now){
+    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    if (S.run){
+      S.x1 = mod(S.x1 + S.v1 * dt, W);
+      S.x2 = mod(S.x2 + S.v2 * dt, W);
+    }
+    draw();
+    requestAnimationFrame(tick);
+  }
+  sync();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

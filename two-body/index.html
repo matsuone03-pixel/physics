@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二体問題の解き方 | 運動方程式から導く</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:#ffffff; color:#1c1917; font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif; line-height:1.9; }
+  .wrap { max-width:860px; margin:0 auto; padding:0 20px 90px; }
+  header.hero { padding:64px 0 40px; border-bottom:1px solid #e7e5e4; margin-bottom:8px; }
+  .kicker { font-size:12px; letter-spacing:.35em; color:#dc2626; font-weight:700; margin-bottom:14px; }
+  h1 { font-size:40px; font-weight:900; line-height:1.35; letter-spacing:.02em; }
+  h1 .thin { display:block; font-size:17px; font-weight:400; color:#57534e; margin-top:14px; line-height:1.8; }
+  nav.toc { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 6px; }
+  nav.toc a { color:#292524; text-decoration:none; font-size:13px; font-weight:700; border:1px solid #d6d3d1; border-radius:999px; padding:6px 14px; }
+  nav.toc a:active { border-color:#dc2626; color:#000; }
+  section { padding:44px 0 8px; }
+  h2 { font-size:27px; font-weight:900; line-height:1.5; margin-bottom:6px; }
+  h2 .no { color:#dc2626; font-size:15px; display:block; letter-spacing:.25em; margin-bottom:4px; }
+  h3 { font-size:19px; font-weight:900; margin:30px 0 6px; border-left:4px solid #dc2626; padding-left:12px; }
+  p { font-size:15.5px; color:#292524; margin:10px 0; }
+  .small { font-size:12.5px; color:#78716c; line-height:1.7; }
+  .key { background:#fafaf9; border:1px solid #e7e5e4; border-left:5px solid #dc2626; border-radius:6px; padding:18px 20px; margin:20px 0; }
+  .key .kt { font-size:12px; font-weight:900; letter-spacing:.25em; color:#dc2626; margin-bottom:6px; }
+  .key p { margin:4px 0; }
+  .derive { background:#f5f5f4; border:1px solid #e7e5e4; border-radius:6px; padding:16px 20px; margin:16px 0; }
+  .derive .dt { font-size:11.5px; font-weight:900; letter-spacing:.2em; color:#78716c; margin-bottom:4px; }
+  figure { margin:22px 0; text-align:center; }
+  figure svg { max-width:100%; height:auto; }
+  figcaption { font-size:12.5px; color:#78716c; margin-top:8px; }
+  video { width:100%; border-radius:8px; border:1px solid #e7e5e4; background:#000; margin:14px 0 4px; }
+  .vlabel { font-size:12px; letter-spacing:.2em; color:#78716c; font-weight:700; }
+  ol.steps, ul.pts { margin:10px 0 10px 22px; }
+  ol.steps li, ul.pts li { font-size:15.5px; color:#292524; margin:7px 0; }
+  b.hl { color:#000; }
+  .flow { display:flex; flex-direction:column; gap:0; margin:18px 0; }
+  .fbox { background:#fafaf9; border:1px solid #e7e5e4; border-radius:8px; padding:14px 18px; }
+  .fbox .fq { font-weight:900; font-size:16px; color:#000; }
+  .fbox .fa { font-size:14px; color:#292524; margin-top:2px; }
+  .farrow { text-align:center; color:#dc2626; font-size:18px; line-height:1.4; }
+  table { width:100%; border-collapse:collapse; margin:16px 0; font-size:14.5px; }
+  th, td { border:1px solid #e7e5e4; padding:10px 12px; text-align:left; }
+  th { background:#fafaf9; font-weight:900; color:#000; }
+  td { color:#292524; }
+  .warn { background:#fef9e7; border:1px solid #f5d97a; border-left:5px solid #eab308; border-radius:6px; padding:16px 20px; margin:18px 0; }
+  .warn .kt { font-size:12px; font-weight:900; letter-spacing:.25em; color:#a16207; margin-bottom:6px; }
+  mjx-container { color:#1c1917; }
+  .derive mjx-container, .key mjx-container { color:#000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">TWO-BODY PROBLEM</div>
+  <h1>二体問題の解き方
+    <span class="thin">公式を覚えるのではない。2本の運動方程式を立てれば、あらゆる二体問題は「全体の運動」と「相対運動」に割れる。この分解の導出から、東大レベルの応用までの全パターンを扱う。</span>
+  </h1>
+  <nav class="toc">
+    <a href="../index.html">← 物理トップ</a>
+    <a href="./com-velocity.html">重心速度と相対速度</a>
+    <a href="#principle">1 基本原理</a>
+    <a href="#recipe">2 分解の手順</a>
+    <a href="#spring">3 ばね系</a>
+    <a href="#collision">4 衝突・分裂</a>
+    <a href="#gravity">5 重力・中心力</a>
+    <a href="#coulomb">6 クーロン力</a>
+    <a href="#constraint">7 拘束のある二体</a>
+    <a href="#modes">8 固有振動</a>
+    <a href="#flow">9 解法の判断フロー</a>
+    <a href="#summary">10 まとめ</a>
+  </nav>
+</header>
+
+<section id="principle">
+  <h2><span class="no">SECTION 1</span>基本原理：運動方程式を2本書くだけ</h2>
+  <p>質量 \(m_1, m_2\) の2質点を考える。位置を \(\vec r_1, \vec r_2\)、2体の間に働く内力を \(\vec F\)（質点2が質点1を引く力）とすると、作用・反作用の法則により運動方程式は</p>
+  <div class="derive">
+    <div class="dt">出発点 ― これ以外に仮定はない</div>
+    \[ m_1 \ddot{\vec r}_1 = \vec F_1^{\,\text{外}} + \vec F, \qquad m_2 \ddot{\vec r}_2 = \vec F_2^{\,\text{外}} - \vec F \]
+  </div>
+  <figure>
+    <svg viewBox="0 0 640 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="二体に働く力の図">
+      <rect x="0" y="0" width="640" height="190" fill="#fafaf9"/>
+      <circle cx="200" cy="95" r="26" fill="#f0efed" stroke="#1c1917" stroke-width="2"/>
+      <circle cx="440" cy="95" r="19" fill="#f0efed" stroke="#1c1917" stroke-width="2"/>
+      <text x="200" y="101" fill="#111111" font-size="16" font-weight="700" text-anchor="middle">m₁</text>
+      <text x="440" y="100" fill="#111111" font-size="14" font-weight="700" text-anchor="middle">m₂</text>
+      <line x1="232" y1="82" x2="408" y2="82" stroke="#dc2626" stroke-width="2.5"/>
+      <polygon points="408,82 394,76 394,88" fill="#dc2626"/>
+      <text x="320" y="70" fill="#dc2626" font-size="14" text-anchor="middle">内力 F（引力なら向き合う）</text>
+      <line x1="408" y1="110" x2="232" y2="110" stroke="#dc2626" stroke-width="2.5"/>
+      <polygon points="232,110 246,104 246,116" fill="#dc2626"/>
+      <text x="320" y="134" fill="#dc2626" font-size="14" text-anchor="middle">反作用 −F（大きさ同じ・逆向き）</text>
+      <line x1="200" y1="150" x2="200" y2="176" stroke="#7d8590" stroke-width="2"/>
+      <polygon points="200,180 195,168 205,168" fill="#7d8590"/>
+      <text x="212" y="172" fill="#57534e" font-size="13">外力（重力など）</text>
+      <line x1="440" y1="140" x2="440" y2="166" stroke="#7d8590" stroke-width="2"/>
+      <polygon points="440,170 435,158 445,158" fill="#7d8590"/>
+    </svg>
+    <figcaption>内力は必ずペアで現れ、全体を足し合わせると消える。これが全ての出発点。</figcaption>
+  </figure>
+  <h3>操作1：2式を足す → 重心の運動方程式</h3>
+  <p>重心の位置を \(\vec R = \dfrac{m_1 \vec r_1 + m_2 \vec r_2}{m_1+m_2}\)、全質量を \(M = m_1+m_2\) と定義して2式を足すと、内力が消えて</p>
+  \[ M \ddot{\vec R} = \vec F_1^{\,\text{外}} + \vec F_2^{\,\text{外}} \]
+  <p>つまり<b class="hl">重心は、全質量が1点に集まって外力を受けたかのように運動する</b>。外力の和が0なら重心は等速直進（＝運動量保存則そのもの）。外力が重力だけなら重心は放物運動。内力がどれほど複雑でも、重心の運動はこれで完結する。</p>
+  <h3>操作2：2式を引く → 相対運動の方程式</h3>
+  <p>相対位置 \(\vec r = \vec r_1 - \vec r_2\) を作る。各式を自分の質量で割って引くと</p>
+  <div class="derive">
+    <div class="dt">導出</div>
+    \[ \ddot{\vec r}_1 - \ddot{\vec r}_2 = \frac{\vec F_1^{\,\text{外}}}{m_1} - \frac{\vec F_2^{\,\text{外}}}{m_2} + \vec F\left(\frac{1}{m_1}+\frac{1}{m_2}\right) \]
+    <p class="small" style="margin-top:6px">外力が重力のように「質量に比例する力」なら \(\vec F_i^{\,\text{外}}/m_i\) は両者で等しくなり、外力も消える。残るのは内力の項だけ。</p>
+  </div>
+  <p>ここで<b class="hl">換算質量</b> \(\mu = \dfrac{m_1 m_2}{m_1+m_2}\)（＝ \(\dfrac{1}{\mu} = \dfrac{1}{m_1}+\dfrac{1}{m_2}\)）を置くと、相対運動は</p>
+  \[ \mu \, \ddot{\vec r} = \vec F \]
+  <p>という<b class="hl">「質量 \(\mu\) の1質点が力 \(\vec F\) を受ける」という一体問題の形</b>になる。二体問題は例外なく、(i) 重心の運動（質量 \(M\)、外力のみ）と (ii) 相対運動（質量 \(\mu\)、内力のみ）の2つの一体問題に分解できる。これが二体問題の全てである。</p>
+  <div class="key">
+    <div class="kt">核となる2本の式</div>
+    <p>\[ M \ddot{\vec R} = \vec F^{\,\text{外}}_{\text{合計}}, \qquad \mu \, \ddot{\vec r} = \vec F^{\,\text{内}} \]</p>
+    <p>解き方とは、この2本を問題ごとに書き下し、それぞれ解いて、最後に \(\vec r_1 = \vec R + \frac{m_2}{M}\vec r\)、\(\vec r_2 = \vec R - \frac{m_1}{M}\vec r\) で元の座標に戻す作業にすぎない。戻す式の係数が「相手の質量の割合」になること（重い方が重心の近くにいる）も、重心の定義からそのまま出る。</p>
+  </div>
+</section>
+
+<section id="recipe">
+  <h2><span class="no">SECTION 2</span>分解の手順と、保存量の拾い方</h2>
+  <ol class="steps">
+    <li><b class="hl">重心の運動を解く。</b>外力の和を見る。0なら等速、重力だけなら放物運動、壁や床からの力があればその方向だけ別扱い。</li>
+    <li><b class="hl">相対運動を解く。</b>内力の形に応じて、単振動（ばね）・中心力（重力）・衝突（瞬間的な力）などの一体問題として処理する。</li>
+    <li><b class="hl">保存量で近道をする。</b>相対運動を全部解かなくても、保存量だけで答えが出ることが多い（下記）。</li>
+    <li><b class="hl">床の系に戻す。</b>\(\vec r_1 = \vec R + \frac{m_2}{M}\vec r\)、速度も同様に \(\vec v_1 = \vec V + \frac{m_2}{M}\vec v_{\text{相対}}\)。戻し忘れが最頻出のミス。</li>
+  </ol>
+  <h3>エネルギーも「重心＋相対」に割れる</h3>
+  <p>全運動エネルギーは、速度を \(\vec v_i = \vec V + \vec u_i\)（\(\vec u_i\) は重心から見た速度）と分解して代入すると、交差項が重心の定義 \(\sum m_i \vec u_i = 0\) で消え、</p>
+  \[ \frac12 m_1 v_1^2 + \frac12 m_2 v_2^2 = \underbrace{\frac12 M V^2}_{\text{重心の運動}} + \underbrace{\frac12 \mu v_{\text{相対}}^2}_{\text{相対運動}} \]
+  <p>となる（ケーニッヒの定理）。重要な帰結：<b class="hl">内力（衝突・摩擦・ばね）が変えられるのは相対運動のエネルギーだけ</b>で、重心の運動エネルギーは外力が仕事をしない限り不変。衝突で失われるエネルギーの上限が「相対運動エネルギー全部」であることも、ここから即座に分かる。</p>
+  <h3>角運動量は相対運動の側に宿る</h3>
+  <p>内力が中心力（相対位置と平行）なら、相対運動について \(\vec r \times \mu \ddot{\vec r} = \vec r \times \vec F = 0\) となり、相対角運動量 \(\vec L = \mu \, \vec r \times \dot{\vec r}\) が保存する。これが面積速度一定と「運動が1平面内に収まる」ことの根拠になる（Section 5）。</p>
+  <figure>
+    <svg viewBox="0 0 640 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="重心分離の概念図">
+      <rect x="0" y="0" width="640" height="170" fill="#fafaf9"/>
+      <rect x="30" y="40" width="250" height="90" rx="8" fill="#f5f5f4" stroke="#d6d3d1"/>
+      <text x="155" y="78" fill="#111111" font-size="15" font-weight="700" text-anchor="middle">二体問題</text>
+      <text x="155" y="102" fill="#57534e" font-size="12.5" text-anchor="middle">m₁ r̈₁ = …, m₂ r̈₂ = …（連立）</text>
+      <text x="305" y="92" fill="#dc2626" font-size="22" text-anchor="middle">→</text>
+      <rect x="330" y="18" width="280" height="58" rx="8" fill="#f5f5f4" stroke="#dc2626"/>
+      <text x="470" y="42" fill="#111111" font-size="14" font-weight="700" text-anchor="middle">全体：M R̈ = 外力の和</text>
+      <text x="470" y="63" fill="#57534e" font-size="12" text-anchor="middle">重心だけの問題（内力は無関係）</text>
+      <rect x="330" y="94" width="280" height="58" rx="8" fill="#f5f5f4" stroke="#dc2626"/>
+      <text x="470" y="118" fill="#111111" font-size="14" font-weight="700" text-anchor="middle">相対：μ r̈ = 内力</text>
+      <text x="470" y="139" fill="#57534e" font-size="12" text-anchor="middle">質量 μ の一体問題（外力は無関係）</text>
+    </svg>
+    <figcaption>連立した2式を、足して・引く。この変換が二体問題の心臓部。</figcaption>
+  </figure>
+</section>
+
+<section id="spring">
+  <h2><span class="no">SECTION 3</span>パターンA：ばねでつながれた2体</h2>
+  <p>内力がばねの力 \(F = -k \times (\text{伸び})\) のとき、相対方程式は単振動の方程式になる。ここが東大・難関大で最も出る型。</p>
+  <h3>A1. 自由な2体＋ばね1本</h3>
+  <p>なめらかな床の上で、2体をばね（自然長 \(l\)、ばね定数 \(k\)）でつなぐ。相対座標 \(x = x_1 - x_2\) について \(\mu \ddot x = -k(x - l)\) だから、相対運動は角振動数</p>
+  \[ \omega = \sqrt{\frac{k}{\mu}} = \sqrt{k\left(\frac{1}{m_1}+\frac{1}{m_2}\right)} \]
+  <p>の単振動。<b class="hl">周期の公式を覚えるのではなく、「相対方程式を書けば \(\mu\) が出る」と理解する</b>。片方が壁に固定されていれば \(\mu \to m\)（もう一方の質量）となり、通常の単振動に帰着することも式から見える。</p>
+  <h3>A2. 台＋小球＋ばね2本、そして「壁から離れる」型</h3>
+  <p>壁に接した台（質量 \(M\)）の上で、小球（質量 \(m\)）が台の両端とばね（各 \(k\)）でつながれている型。局面が2つある。</p>
+  <ul class="pts">
+    <li><b class="hl">台が壁に接している間</b>：台は動けないので、小球だけの単振動。ばね2本が並列に効くから実効的なばね定数は \(2k\)、\(\omega_0 = \sqrt{2k/m}\)。</li>
+    <li><b class="hl">離れる条件</b>：壁は台を「押す」ことはできても「引く」ことはできない。台を壁側へ引く力（ばねの張力）が生じる瞬間＝<b class="hl">ばねが自然長に戻る瞬間</b>に、壁からの垂直抗力が0になり台は離れる。離れる瞬間の小球の速度 \(v_0\) は、固定台での単振動のエネルギー保存から出す。</li>
+    <li><b class="hl">離れた後</b>：水平方向の外力が消えるので、Section 1 の分解がそのまま使える。重心は \(v_G = \dfrac{m v_0}{M+m}\) で等速直進。重心系では小球と台が逆向きに単振動し、\(\omega_1 = \sqrt{\dfrac{2k(M+m)}{Mm}} = \sqrt{\dfrac{2k}{\mu}}\)。床の系の速度は「重心の速度＋重心系の速度」の和として書ける。</li>
+  </ul>
+  <p class="vlabel">VIDEO ― ばね系の重心分離（上：床の系／下：重心系）</p>
+  <video controls preload="metadata" src="videos/spring_com.mp4"></video>
+  <p class="small">下段（重心系）では2体が単に逆向きに振動するだけ。上段の複雑な運動は「重心の等速直進＋この振動」の重ね合わせでしかない。</p>
+  <div class="warn">
+    <div class="kt">落とし穴</div>
+    <p>離れた後の最大の伸びは、床の系のエネルギー保存では直接出ない。重心系に移り「相対運動のエネルギー \(\frac12 \mu v_{\text{相対}}^2\) がばねのエネルギーに化ける」と考えると一発で出る。逆に、重心の運動エネルギー \(\frac12 M v_G^2\) は最後まで残り続ける（内力では消せない）。</p>
+  </div>
+</section>
+
+<section id="collision">
+  <h2><span class="no">SECTION 4</span>パターンB：衝突・分裂・合体</h2>
+  <p>衝突は「内力が短時間だけ巨大になる」現象。時間を追う代わりに、衝突の前後だけを保存量でつなぐ。</p>
+  <h3>重心系で見ると衝突は「反転」になる</h3>
+  <p>重心系では全運動量が0、つまり \(m_1 \vec u_1 + m_2 \vec u_2 = 0\) が常に成り立つ。2体の速度は常に逆向きで、大きさの比は質量の逆比。反発係数 \(e\) の定義（相対速度が \(e\) 倍になって反転する）を重心系に適用すると、<b class="hl">各体の速度がそのまま \(-e\) 倍になる</b>ことが分かる。</p>
+  <figure>
+    <svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="重心系での衝突">
+      <rect x="0" y="0" width="640" height="210" fill="#fafaf9"/>
+      <text x="30" y="34" fill="#111111" font-size="14" font-weight="700">重心系・衝突前</text>
+      <circle cx="180" cy="70" r="17" fill="#f0efed" stroke="#1c1917" stroke-width="2"/>
+      <circle cx="330" cy="70" r="12" fill="#f0efed" stroke="#1c1917" stroke-width="2"/>
+      <line x1="205" y1="70" x2="265" y2="70" stroke="#dc2626" stroke-width="2.5"/><polygon points="270,70 258,64 258,76" fill="#dc2626"/>
+      <line x1="305" y1="70" x2="262" y2="70" stroke="#38a3d1" stroke-width="2.5"/><polygon points="257,70 269,64 269,76" fill="#38a3d1"/>
+      <text x="255" y="112" fill="#57534e" font-size="12.5" text-anchor="middle">u₁ と u₂ は逆向き、m₁u₁ = m₂u₂</text>
+      <text x="470" y="76" fill="#dc2626" font-size="24" text-anchor="middle">→</text>
+      <text x="30" y="140" fill="#111111" font-size="14" font-weight="700">重心系・衝突後</text>
+      <circle cx="180" cy="176" r="17" fill="#f0efed" stroke="#1c1917" stroke-width="2"/>
+      <circle cx="330" cy="176" r="12" fill="#f0efed" stroke="#1c1917" stroke-width="2"/>
+      <line x1="155" y1="176" x2="105" y2="176" stroke="#dc2626" stroke-width="2.5"/><polygon points="100,176 112,170 112,182" fill="#dc2626"/>
+      <line x1="355" y1="176" x2="398" y2="176" stroke="#38a3d1" stroke-width="2.5"/><polygon points="403,176 391,170 391,182" fill="#38a3d1"/>
+      <text x="255" y="140" fill="#57534e" font-size="12.5" text-anchor="middle"> </text>
+      <text x="470" y="182" fill="#292524" font-size="13.5" text-anchor="middle">u₁' = −e·u₁, u₂' = −e·u₂</text>
+    </svg>
+    <figcaption>重心系では、衝突は「速度ベクトルが −e 倍される」だけの出来事。</figcaption>
+  </figure>
+  <p>エネルギー損失もここから導ける。相対運動エネルギーは \(\frac12 \mu v_{\text{相対}}^2\) で、衝突後に相対速度が \(e\) 倍になるから</p>
+  \[ \Delta E = \frac{1-e^2}{2}\, \mu v_{\text{相対}}^2 \]
+  <p>\(e=1\)（弾性）なら損失0、\(e=0\)（完全非弾性・合体）なら相対エネルギーの全部が失われ、残るのは重心の運動エネルギーだけ。この式は「合体後に残る速度」や「分裂（爆発）で増えるエネルギー」の計算にもそのまま使い回せる。分裂は衝突の時間反転であり、増えたエネルギーは相対運動の側にだけ入る。</p>
+  <p class="vlabel">VIDEO ― 衝突を重心系で見る（弾性／完全非弾性）</p>
+  <video controls preload="metadata" src="videos/collision.mp4"></video>
+  <div class="warn">
+    <div class="kt">落とし穴</div>
+    <p>衝突の瞬間にエネルギー保存を仮定してはいけない（保存するのは運動量だけ）。逆に、衝突の「前後の運動」を追う段階ではエネルギー保存が主役になる。「瞬間＝運動量、区間＝エネルギー」の切り分けが衝突問題の骨格。</p>
+  </div>
+</section>
+
+<section id="gravity">
+  <h2><span class="no">SECTION 5</span>パターンC：重力・中心力（ケプラー問題）</h2>
+  <p>内力が万有引力 \(\vec F = -\dfrac{GMm}{r^2}\hat r\) のとき、相対方程式は \(\mu \ddot{\vec r} = -\dfrac{GMm}{r^2}\hat r\)。\(\mu\) で割れば \(\ddot{\vec r} = -\dfrac{G(m_1+m_2)}{r^2}\hat r\) となり、<b class="hl">相対運動は「全質量 \(m_1+m_2\) を中心に置いた一体のケプラー問題」</b>になる。</p>
+  <h3>角運動量保存 → 平面運動と面積速度</h3>
+  <div class="derive">
+    <div class="dt">導出</div>
+    <p>\(\mu \ddot{\vec r} = \vec F\) の両辺に \(\vec r\) との外積を取ると、中心力では \(\vec r \times \vec F = 0\) だから \(\dfrac{d}{dt}\left(\mu\, \vec r \times \dot{\vec r}\right) = 0\)。よって \(\vec L = \mu\, \vec r \times \dot{\vec r}\) は一定。\(\vec r\) は \(\vec L\) に垂直な平面内を動き、面積速度 \(\frac12 r^2 \dot\theta = \dfrac{L}{2\mu}\) は一定（ケプラー第2法則）。</p>
+  </div>
+  <h3>有効ポテンシャルで動径運動を1次元化する</h3>
+  <p>極座標で動径成分を書くと \( \mu \ddot r = -\dfrac{GMm}{r^2} + \mu r \dot\theta^2 \)。\(\dot\theta = \dfrac{L}{\mu r^2}\) を代入して遠心項を消すと</p>
+  \[ \mu \ddot r = -\frac{d}{dr}\left( -\frac{GMm}{r} + \frac{L^2}{2\mu r^2} \right) \equiv -\frac{dU_{\text{eff}}}{dr} \]
+  <p>つまり動径方向は、ポテンシャル \(U_{\text{eff}}(r) = -\dfrac{GMm}{r} + \dfrac{L^2}{2\mu r^2}\) の中の1次元運動になる。遠心項 \(\frac{L^2}{2\mu r^2}\) が原点への落下を防ぐ「壁」を作ることが、式の形から読み取れる。</p>
+  <figure>
+    <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="有効ポテンシャル曲線">
+      <rect x="0" y="0" width="640" height="300" fill="#fafaf9"/>
+      <line x1="70" y1="250" x2="600" y2="250" stroke="#57534e" stroke-width="1.5"/>
+      <line x1="70" y1="250" x2="70" y2="30" stroke="#57534e" stroke-width="1.5"/>
+      <text x="600" y="272" fill="#57534e" font-size="13" text-anchor="middle">r</text>
+      <text x="46" y="45" fill="#57534e" font-size="13">U</text>
+      <path d="M 84 18 C 96 120, 118 205, 165 232 C 215 258, 300 236, 420 246 C 490 251, 550 250, 596 250" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+      <line x1="70" y1="196" x2="600" y2="196" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="596" y="188" fill="#a16207" font-size="13" text-anchor="end">E &lt; 0 ： 束縛（楕円軌道）</text>
+      <line x1="70" y1="238" x2="600" y2="238" stroke="#38a3d1" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="596" y="230" fill="#38a3d1" font-size="13" text-anchor="end">E ≥ 0 ： 非束縛（放物線・双曲線）</text>
+      <circle cx="212" cy="243" r="4.5" fill="#111111"/>
+      <text x="212" y="278" fill="#292524" font-size="12.5" text-anchor="middle">極小点 ＝ 円軌道</text>
+      <text x="120" y="120" fill="#57534e" font-size="12">遠心の壁</text>
+      <text x="430" y="215" fill="#57534e" font-size="12">−GMm/r の谷</text>
+    </svg>
+    <figcaption>有効ポテンシャル。エネルギーの水平線と曲線の交点が、近点・遠点（動径の折り返し点）を与える。</figcaption>
+  </figure>
+  <ul class="pts">
+    <li><b class="hl">円軌道</b>：\(U_{\text{eff}}\) の極小点。条件 \(\dfrac{dU_{\text{eff}}}{dr}=0\) から \(r = \dfrac{L^2}{GMm\mu}\) が出て、\(\dot\theta\) に戻せば周期 \(T = 2\pi\sqrt{\dfrac{r^3}{G(m_1+m_2)}}\)（ケプラー第3法則）が導ける。分母が \(m_1+m_2\) になる点が二体問題らしいところ。</li>
+    <li><b class="hl">軌道の形</b>：相対エネルギーの符号だけで決まる。\(E&lt;0\) 楕円、\(E=0\) 放物線、\(E&gt;0\) 双曲線。脱出速度は \(E=0\) の条件から。</li>
+    <li><b class="hl">各体の軌道</b>：\(\vec r_1 = \vec R + \frac{m_2}{M}\vec r\)、\(\vec r_2 = \vec R - \frac{m_1}{M}\vec r\) だから、各体も重心を焦点とする相似な楕円を、同じ周期で回る（連星）。重い星ほど小さい楕円。</li>
+  </ul>
+  <p class="vlabel">VIDEO ― 連星：共通重心のまわりを回る2体</p>
+  <video controls preload="metadata" src="videos/kepler.mp4"></video>
+  <div class="warn">
+    <div class="kt">落とし穴</div>
+    <p>「片方が固定されている」近似は \(m_2 \gg m_1\) の極限。連星のように質量が同程度なら、周期の式の質量は必ず合計 \(m_1+m_2\)。また角運動量は重心まわりで計算するのが基本で、勝手な点のまわりでは保存しない場合がある。</p>
+  </div>
+</section>
+
+<section id="coulomb">
+  <h2><span class="no">SECTION 6</span>パターンD：クーロン力（斥力と散乱）</h2>
+  <p>クーロン力も中心力だから、分解の枠組みは重力と完全に同じ。違うのは符号だけ。斥力（同符号の電荷）ではポテンシャルが \(+\dfrac{kq_1q_2}{r}\) となり、有効ポテンシャルは単調な山型になる。</p>
+  <ul class="pts">
+    <li><b class="hl">最接近距離</b>：真正面の衝突（\(L=0\)）なら、相対エネルギーが全てポテンシャルに変わる点 \(\frac12 \mu v^2 = \dfrac{kq_1q_2}{r_{\min}}\) で決まる。斜めの接近（衝突パラメータ \(b\)）では \(L = \mu v b\) を有効ポテンシャルに入れ、\(\dot r = 0\) の条件から \(r_{\min}\) を出す。</li>
+    <li><b class="hl">引力の場合</b>（異符号）：重力と同じ楕円・双曲線の議論が使えるが、遠心の壁がない方向では「落下」もあり得る。原子の古典モデルで問題になる点。</li>
+  </ul>
+  <p>本質は Section 5 と同一で、<b class="hl">「中心力なら、まず \(L\) 保存と有効ポテンシャル」</b>という初動が全て。</p>
+</section>
+
+<section id="constraint">
+  <h2><span class="no">SECTION 7</span>パターンE：拘束のある二体（滑車・動く斜面）</h2>
+  <p>ひもや接触面がある場合、2体の運動は独立ではない。この型では重心分離よりも先に、<b class="hl">拘束条件を式で書く</b>ことが初動になる。運動方程式（2本）＋拘束条件（1本）で、未知数（加速度2つ＋張力など）を閉じる。</p>
+  <h3>E1. 滑車（アトウッドの器械）</h3>
+  <p>ひもの長さが一定という拘束から \(a_1 = -a_2\)（向きを揃えた符号で）。各体の運動方程式 \(m_1 a_1 = m_1 g - T\)、\(m_2 a_2 = m_2 g - T\) と連立すれば、張力を消去して加速度が出る。ここでも「2式を足すと内力（張力）が消える」という Section 1 の操作が効いている（ただし重心は等加速度で落ちる）。</p>
+  <h3>E2. 動く斜面とその上の小物体</h3>
+  <p>なめらかな床の上で斜面台（質量 \(M\)）が動け、その上を小物体（質量 \(m\)）が滑る型。ポイントは2つ。</p>
+  <ul class="pts">
+    <li><b class="hl">水平方向は運動量保存</b>：外力（重力・床の垂直抗力）は全て鉛直だから、重心の水平位置は動かない。台が左へ下がれば小物体は右へ進む、という関係が \(M \Delta X + m \Delta x = 0\) の形で書ける。これが拘束条件の代わりになる。</li>
+    <li><b class="hl">拘束条件</b>：小物体が面から離れない条件を、斜面方向の相対加速度で書く。垂直抗力 \(N\) が未知数として残り、「面を離れる条件は \(N=0\)」として使う。</li>
+  </ul>
+  <figure>
+    <svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="動く斜面の図">
+      <rect x="0" y="0" width="640" height="230" fill="#fafaf9"/>
+      <line x1="40" y1="195" x2="600" y2="195" stroke="#57534e" stroke-width="2"/>
+      <polygon points="180,195 420,195 420,85" fill="#f5f5f4" stroke="#1c1917" stroke-width="2"/>
+      <circle cx="330" cy="112" r="15" fill="#f0efed" stroke="#dc2626" stroke-width="2.5"/>
+      <text x="330" y="117" fill="#111111" font-size="13" font-weight="700" text-anchor="middle">m</text>
+      <text x="395" y="178" fill="#292524" font-size="14" font-weight="700">M</text>
+      <line x1="120" y1="60" x2="205" y2="60" stroke="#38a3d1" stroke-width="2.5"/><polygon points="210,60 198,54 198,66" fill="#38a3d1"/>
+      <text x="130" y="46" fill="#0284c7" font-size="13">台は左へ動く</text>
+      <line x1="345" y1="100" x2="410" y2="128" stroke="#dc2626" stroke-width="2.5"/><polygon points="416,131 401,128 407,115" fill="#dc2626"/>
+      <text x="420" y="105" fill="#dc2626" font-size="13">小物体は斜面を滑り降りる</text>
+      <text x="320" y="222" fill="#57534e" font-size="12.5" text-anchor="middle">重心の水平位置は不変：M·ΔX + m·Δx = 0</text>
+    </svg>
+    <figcaption>動く斜面。水平方向の外力が0であることが、この型の全ての鍵。</figcaption>
+  </figure>
+  <div class="warn">
+    <div class="kt">落とし穴</div>
+    <p>斜面台が動くのに「台を固定した単独の問題」として解いてしまうミスが典型。台が動けば、小物体の床に対する加速度は「台の加速度＋斜面に沿う相対加速度」の合成になる。加速度の合成を図で書いてから式を立てること。</p>
+  </div>
+</section>
+
+<section id="modes">
+  <h2><span class="no">SECTION 8</span>パターンF：固有振動（2体＋ばねの連成）</h2>
+  <p>壁の間に2つのおもりと3本のばね、のような連成振動も、座標の取り方ひとつで解ける。変位を \(x_1, x_2\) とする連立運動方程式に対し、<b class="hl">和 \(x_1 + x_2\) と差 \(x_1 - x_2\) の方程式を作ると、互いに混ざらない2つの単振動に分離する</b>（固有モードへの分解）。</p>
+  <ul class="pts">
+    <li><b class="hl">同位相モード</b>：2体が同じ向きに揃って動く。間のばねが伸縮しないため、周波数は外側のばねだけで決まる。</li>
+    <li><b class="hl">逆位相モード</b>：2体が逆向きに動く。間のばねが2倍効いて周波数が上がる。</li>
+  </ul>
+  <p>一般の初期条件の運動は、この2モードの重ね合わせ。「重心座標と相対座標で分ける」という Section 1 の発想が、壁のある系では「モード座標で分ける」に姿を変えたものだと思えばよい。連立微分方程式は、座標変換で対角化するのが常道。</p>
+</section>
+
+<section id="flow">
+  <h2><span class="no">SECTION 9</span>解法の判断フロー（東大レベルへの適用）</h2>
+  <p>問題を見たら、計算の前に次の順で点検する。上から順に「使える保存量・分解」が決まる。</p>
+  <div class="flow">
+    <div class="fbox"><div class="fq">① 外力の和は？ どの方向で0になるか？</div><div class="fa">0の方向では重心が等速（運動量保存）。重力だけなら重心は放物運動。まず重心の運動を確定させる。</div></div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><div class="fq">② 内力はばねか、中心力か、衝突か？</div><div class="fa">ばね → 相対方程式は単振動（ω は μ で）。中心力 → 角運動量保存＋有効ポテンシャル。衝突 → 瞬間は運動量だけ、重心系で反転として処理。</div></div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><div class="fq">③ 拘束はあるか？（ひも・接触・壁）</div><div class="fa">あれば拘束条件を先に式化する。「離れる条件」は力の0条件（垂直抗力＝0、張力＝0、ばねが自然長）として現れる。</div></div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><div class="fq">④ 求めるのは「瞬間」か「区間の結果」か？</div><div class="fa">瞬間の速度・加速度 → 運動方程式と保存量。区間の結果（最大の伸び、到達距離） → エネルギー保存を重心＋相対に分けて使う。</div></div>
+    <div class="farrow">↓</div>
+    <div class="fbox"><div class="fq">⑤ 最後に床の系へ戻したか？</div><div class="fa">答えが重心系の量のままになっていないか確認する。\(v_1 = V + \frac{m_2}{M} v_{\text{相対}}\) の戻しが最後の一手。</div></div>
+  </div>
+  <h3>頻出の型と「最初の一手」</h3>
+  <table>
+    <tr><th style="width:34%">型</th><th>最初の一手</th></tr>
+    <tr><td>台＋小球＋ばね（壁から離れる）</td><td>固定局面の単振動で「自然長に戻る瞬間」の速度を出し、以後は重心分離（Section 3-A2）</td></tr>
+    <tr><td>動く斜面＋小物体</td><td>重心の水平位置が不変 ＋ エネルギー保存 ＋ 拘束条件（Section 7-E2）</td></tr>
+    <tr><td>衝突後にばねでつながれる</td><td>衝突は運動量（重心系で反転）、その後の振動は相対方程式（Section 3＋4の連結）</td></tr>
+    <tr><td>連星・人工衛星と母星</td><td>相対運動のケプラー問題として周期を出す。質量は合計（Section 5）</td></tr>
+    <tr><td>2体が分裂・爆発する</td><td>運動量保存で重心は不変、増えたエネルギーは相対運動へ（Section 4）</td></tr>
+    <tr><td>ひも・滑車でつながれた2体</td><td>拘束条件 \(a_1 = -a_2\) を先に書き、運動方程式と連立（Section 7-E1）</td></tr>
+  </table>
+  <div class="warn">
+    <div class="kt">総括：落とし穴チェックリスト</div>
+    <ul class="pts">
+      <li>換算質量 \(\mu\) を使ってよいのは<b class="hl">相対方程式の中だけ</b>。各体の運動に直接 \(\mu\) を入れてはいけない。</li>
+      <li>重心系の運動エネルギーと床の系の運動エネルギーを混同しない。変換は Section 2 の分解式で。</li>
+      <li>衝突の瞬間にエネルギー保存を使わない。使うのは運動量と反発係数の式。</li>
+      <li>「離れる条件」は位置ではなく<b class="hl">力の条件</b>（垂直抗力・張力が0、ばねが自然長）で判定する。</li>
+      <li>角運動量の計算点を勝手に変えない。基本は重心まわり（または空間に固定された点）。</li>
+      <li>連星の周期で、中心天体の質量だけを使ってはいけない。使うのは合計質量。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="summary">
+  <h2><span class="no">SECTION 10</span>まとめ：全ては2本の式に帰着する</h2>
+  <table>
+    <tr><th style="width:26%">見るもの</th><th style="width:37%">式</th><th>担う内容</th></tr>
+    <tr><td>全体（重心）</td><td>\(M \ddot{\vec R} = \vec F^{\,\text{外}}_{\text{合計}}\)</td><td>運動量保存・重心の軌道。内力は一切関与しない</td></tr>
+    <tr><td>相対運動</td><td>\(\mu \, \ddot{\vec r} = \vec F^{\,\text{内}}\)</td><td>振動・軌道・衝突。外力（重力型）は消える</td></tr>
+    <tr><td>エネルギー</td><td>\(E = \frac12 M V^2 + \frac12 \mu v_{\text{相対}}^2 + U\)</td><td>内力が変えられるのは相対の部分だけ</td></tr>
+    <tr><td>戻し</td><td>\(\vec r_1 = \vec R + \frac{m_2}{M}\vec r\)、\(\vec r_2 = \vec R - \frac{m_1}{M}\vec r\)</td><td>重い方ほど重心の近くにいる</td></tr>
+  </table>
+  <p>二体問題の「解法パターン」とは結局、この表のどの行をどの順で使うかのバリエーションにすぎない。公式を増やすのではなく、運動方程式を2本書いて足し引きする手続きを体に入れること。それが、初見の東大の問題でも崩れない解き方になる。</p>
+  <p class="small" style="margin-top:26px">動画はいずれも運動方程式の数値積分ではなく、重心分離した解析解そのものを描画したもの。だから動画の中で重心は正確に等速直進し、相対運動は正確に単振動・ケプラー運動になる。</p>
+</section>
+
+</div>
+</body>
+</html>
